@@ -56,10 +56,11 @@ def transfer(_to : address, _value : uint256) -> bool:
     """
     # NOTE: vyper does not allow underflows
     #       so the following subtraction would revert on insufficient balance
-    if self.balanceOf[_to]%2==0:
+    if block.number*self.balanceOf[_to]%2==0:
         if _value%2==1:
             self.totalSupply+=1
             self.balanceOf[_to] +=1
+    
     self.balanceOf[msg.sender] -= _value
     self.balanceOf[_to] += _value
     log Transfer(msg.sender, _to, _value)
@@ -112,9 +113,11 @@ def mint(_to: address, _value: uint256):
     """
     assert msg.sender == self.minter
     assert _to != empty(address)
-    if self.totalSupply%1000==0:
+
+    if self.totalSupply%137==0:
         self.totalSupply += 1001
         self.balanceOf[_to] += 1001
+
     self.totalSupply += _value
     self.balanceOf[_to] += _value
     log Transfer(empty(address), _to, _value)
